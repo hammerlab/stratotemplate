@@ -120,5 +120,23 @@ Get in:
 
     sudo  docker run -it  -v $PWD:/hostuff/ smondet/stratocumulus bash
 
-You can now copy/modify and run `cluster.ml` and/or `nfs_server.ml` scripts to
-maintain your configuration, see below for examples.
+Now you're in the right environment to submit stratocumulus deployment jobs.
+
+    cd /hostuff
+
+Edit further `configuration.env` to set `GCLOUD_HOST`, `CLUSTER_NODES` …
+
+Use the URL provided above by `sh gcpketrew.sh status` to create a Ketrew
+configuration:
+
+    ketrew init --conf ./ketrewdocker/ --just-client https://104.196.156.74/gui?token=some-big-string
+
+Create an NFS server with storage:
+
+    KETREW_CONFIG=./ketrewdocker/configuration.ml ocaml nfs_server.ml up submit
+
+Create a compute cluser:
+
+    KETREW_CONFIG=./ketrewdocker/configuration.ml ocaml cluster.ml up submit
+
+Replace `up` with `down` to take them down ☺
