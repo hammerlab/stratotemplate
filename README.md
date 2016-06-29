@@ -126,10 +126,12 @@ Now you're in the right environment to submit stratocumulus deployment jobs.
 
 Edit further `configuration.env` to set `GCLOUD_HOST`, `CLUSTER_NODES` …
 
+    . configuration.ml
+
 Use the URL provided above by `sh gcpketrew.sh status` to create a Ketrew
 configuration:
 
-    ketrew init --conf ./ketrewdocker/ --just-client https://104.196.156.74/gui?token=some-big-string
+    ketrew init --conf ./ketrewdocker/ --just-client $(cat $KETREW_URL)
 
 Create an NFS server with storage:
 
