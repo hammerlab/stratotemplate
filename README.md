@@ -32,7 +32,7 @@ Get to the GClouder:
 Install a few more things:
 
     sudo apt-get update
-    sudo apt-get install -y unzip build-essential
+    sudo apt-get install -y unzip build-essential git
 
 The VM comes with `gcloud` installed but this deployment does not have full
 capabilities; we need to get a fresh one
@@ -75,6 +75,7 @@ Get the script, and run it:
 
     . configuration.env
     sh gcpketrew.sh up
+    # The first time this may prompt for a `[Y/n]` question.
 
 When the command returns the deployment is partially ready, one needs to ask for
 the status a few times before the “External IP” is available:
@@ -124,21 +125,25 @@ Now you're in the right environment to submit stratocumulus deployment jobs.
 
     cd /hostuff
 
-Edit further `configuration.env` to set `GCLOUD_HOST`, `CLUSTER_NODES` …
+Edit further `configuration.env` to set `GCLOUD_HOST`, `CLUSTER_NODES` … cf.
+comments in the file.
 
-    . configuration.ml
+    . configuration.env
 
 Use the URL provided above by `sh gcpketrew.sh status` to create a Ketrew
 configuration:
 
-    ketrew init --conf ./ketrewdocker/ --just-client $(cat $KETREW_URL)
+    ketrew init --conf ./ketrewdocker/ --just-client $(cat $ketrew_url)
 
 Create an NFS server with storage:
 
     KETREW_CONFIG=./ketrewdocker/configuration.ml ocaml nfs_server.ml up submit
 
-Create a compute cluser:
+Create a compute cluster:
 
     KETREW_CONFIG=./ketrewdocker/configuration.ml ocaml cluster.ml up submit
 
-Replace `up` with `down` to take them down ☺
+The 2 above commands submit workflows to the Ketrew server, you can monitor them
+with the WebUI (see `cat $KETREW_URL`).
+
+Replace `up` with `down` to take the deployments down ☺
