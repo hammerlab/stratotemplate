@@ -32,7 +32,7 @@ let configuration =
 
 let deployment =
   let one_nfs_mount =
-    let server = Node.make (name "nfs-server-vm") in
+    let server = Node.make (name "nfs-nfsservervm") in
     Nfs.Mount.make
       ~server
       ~remote_path:("/nfs-pool")
