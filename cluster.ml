@@ -5,6 +5,7 @@
 
 open Nonstd
 open Stratocumulus.Deploy
+let (//) = Filename.concat
 
 let env_exn s =
   try Sys.getenv s with _ ->
@@ -27,18 +28,42 @@ let nb_of_nodes = env_exn "CLUSTER_NODES" |> int_of_string
 let prefix = env_exn "PREFIX"
 let name s = sprintf "%s-%s" prefix s
 
+
+let authorize_keys =
+  let i = open_in @@ env_exn "SSH_CONFIG_DIR" // "kserver.pub" in
+  let rec read_all acc =
+    try read_all (input_line i :: acc)
+    with _ -> acc in
+  List.filter_map (read_all []) ~f:(function
+    | "" -> None
+    | more -> Some (`Inline more))
+
+let nfs_mounts =
+  env_exn "CLUSTER_NFS_MOUNTS"
+  |> String.split ~on:(`Character ':')
+  |> List.map ~f:(fun csv ->
+      String.split ~on:(`Character ',') csv
+      |> begin function
+      | vm :: remote_path :: witness :: mount_point :: [] ->
+        let server = Node.make vm in
+        Nfs.Mount.make ~server ~remote_path ~witness ~mount_point
+      | other ->
+        ksprintf failwith "Wrong format for CLUSTER_NFS_MOUNTS: %S" csv
+      end)
+
+
 let configuration =
   Configuration.make ~gcloud_host ()
 
 let deployment =
-  let one_nfs_mount =
+  (* let one_nfs_mount =
     let server = Node.make (name "nfs-nfsservervm") in
     Nfs.Mount.make
       ~server
       ~remote_path:("/nfs-pool")
       ~witness:"./.stratowitness"
       ~mount_point:"/nfswork"
-  in
+  in *)
   let compute_node name =
     Node.make name
       ~java:`Oracle_7
@@ -53,11 +78,12 @@ let deployment =
               compute_node (sprintf "%s-compute-%02d" prefix i)
             )
         )
-        ~nfs_mounts:[one_nfs_mount]
+        ~nfs_mounts
         ~torque_server:(compute_node (name "pbs-server"))
         ~users:[
           User.make ~unix_uid:20420 (sprintf "%s-user" prefix);
         ]
+        ~authorize_keys
     ]
 
 let () =
