@@ -35,7 +35,7 @@ let deployment =
     let server = Node.make (name "nfs-server-vm") in
     Nfs.Mount.make
       ~server
-      ~remote_path:("/" ^ name "storage")
+      ~remote_path:("/nfs-pool")
       ~witness:"./.stratowitness"
       ~mount_point:"/nfswork"
   in
