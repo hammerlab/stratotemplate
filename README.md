@@ -133,7 +133,7 @@ comments in the file.
 Use the URL provided above by `sh gcpketrew.sh status` to create a Ketrew
 configuration:
 
-    ketrew init --conf ./ketrewdocker/ --just-client $(cat $ketrew_url)
+    ketrew init --conf ./ketrewdocker/ --just-client $(cat $KETREW_URL)
 
 Create an NFS server with storage:
 
