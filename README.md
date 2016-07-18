@@ -40,7 +40,8 @@ capabilities; we need to get a fresh one
 
     curl https://sdk.cloud.google.com | bash
 
-… saying `Yes` to everything …
+… saying `Yes` to everything … and then, you need to reload your `.bashrc` (just
+type `bash`).
 
 For some reason the zone has to be configured again (replace `us-east1-c` with
 your favorite part of the world):
