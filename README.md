@@ -83,7 +83,9 @@ the status a few times before the “External IP” is available:
 
     sh gcpketrew.sh status
 
-When it's ready, a little more configuration is required:
+When it's ready, a little more configuration is required (*is this command fails;
+wait and try again a minute or so later until it succeeds; the container engine
+may be slow at creating “pods”*):
 
     sh gcpketrew.sh configure+local
 
