@@ -21,6 +21,7 @@ let gcloud_host = env_exn "GCLOUD_HOST"
 let prefix = env_exn "PREFIX"
 let name s = sprintf "%s-%s" prefix s
 
+let gcloud_zone = env_exn "GCLOUD_ZONE"
 
 let storage_size = `GB (env_exn "SIZE_GB" |> int_of_string)
 
@@ -30,6 +31,7 @@ let configuration =
 let deployment =
   let nfs =
     Nfs.Fresh.make (name "nfs") ~size:storage_size
+      ~zone:gcloud_zone
       ~witness:(`Create "./.stratowitness")
   in
   Deployment.make (name "nfstrato")

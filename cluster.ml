@@ -28,6 +28,7 @@ let nb_of_nodes = env_exn "CLUSTER_NODES" |> int_of_string
 let prefix = env_exn "PREFIX"
 let name s = sprintf "%s-%s" prefix s
 
+let gcloud_zone = env_exn "GCLOUD_ZONE"
 
 let authorize_keys =
   let i = open_in @@ env_exn "SSH_CONFIG_DIR" // "kserver.pub" in
@@ -45,7 +46,7 @@ let nfs_mounts =
       String.split ~on:(`Character ',') csv
       |> begin function
       | vm :: remote_path :: witness :: mount_point :: [] ->
-        let server = Node.make vm in
+        let server = Node.make vm ~zone:gcloud_zone in
         Nfs.Mount.make ~server ~remote_path ~witness ~mount_point
       | other ->
         ksprintf failwith "Wrong format for CLUSTER_NFS_MOUNTS: %S" csv
@@ -66,6 +67,7 @@ let deployment =
   in *)
   let compute_node name =
     Node.make name
+      ~zone:gcloud_zone
       ~java:`Oracle_7
       ~machine_type:(`Google_cloud `Highmem_8)
   in
