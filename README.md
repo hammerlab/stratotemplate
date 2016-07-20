@@ -142,6 +142,13 @@ Create an NFS server with storage:
 
     KETREW_CONFIG=./ketrewdocker/configuration.ml ocaml nfs_server.ml up submit
 
+If you'd like this NFS pool mounted on the cluster you're about to create, you 
+should edit your configuration.env to add it to the CLUSTER_NFS_MOUNT list; 
+stratotemplate does not do this automatically for you. Storage is mounted at 
+/nfs-pool and the witness file is .stratowitness on the newly created servers.
+You can find the NFS VM name through the GCloud instance list; it will be
+prefixed with the `$PREFIX` in your configuration.
+
 Create a compute cluster:
 
     KETREW_CONFIG=./ketrewdocker/configuration.ml ocaml cluster.ml up submit
