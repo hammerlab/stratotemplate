@@ -142,6 +142,8 @@ Create an NFS server with storage:
 
     KETREW_CONFIG=./ketrewdocker/configuration.ml ocaml nfs_server.ml up submit
 
+If you'd like this NFS pool mounted on the cluster you're about to create, you should edit your configuration.env to add it to the CLUSTER_NFS_MOUNT list; stratotemplate cannot do this automatically for you.
+
 Create a compute cluster:
 
     KETREW_CONFIG=./ketrewdocker/configuration.ml ocaml cluster.ml up submit
