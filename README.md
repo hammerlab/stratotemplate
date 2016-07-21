@@ -157,3 +157,17 @@ The 2 above commands submit workflows to the Ketrew server, you can monitor them
 with the WebUI (see `cat $KETREW_URL`).
 
 Replace `up` with `down` to take the deployments down ☺
+
+## Using your `machine`
+
+Stratotemplate provides a basic `biokepi_machine` for easy 
+`Biokepi.Edsl.Machine.t` creation. This you can `#use` in a script to get a
+`machine`, required for most for Biokepi workflows.
+
+A few environment variables need to be set in order for it to work:
+
+1. `PREFIX` set already in `configuration.env`
+2. `BIOKEPI_WORK_DIR` 
+3. `GATK_JAR_URL` and `MUTECT_JAR_URL` URLs to GATK and MuTect (1) JARs; 
+  Biokepi can't automatically download these because of the restrictive 
+  licenses on them. 
