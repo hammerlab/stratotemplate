@@ -70,6 +70,7 @@ let deployment =
       ~zone:gcloud_zone
       ~java:`Oracle_7
       ~machine_type:(`Google_cloud `Highmem_8)
+      ~additional_packages:["postgresql-9.4"]
   in
   Deployment.make (name "one")
     ~configuration
