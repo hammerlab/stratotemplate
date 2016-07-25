@@ -30,6 +30,12 @@ let name s = sprintf "%s-%s" prefix s
 
 let gcloud_zone = env_exn "GCLOUD_ZONE"
 
+let additional_packages =
+  try
+    env_exn "ADDITIONAL_CLUSTER_PACKAGES"
+    |> String.split ~on:(`Character ',')
+  with _ -> []
+
 let authorize_keys =
   let i = open_in @@ env_exn "SSH_CONFIG_DIR" // "kserver.pub" in
   let rec read_all acc =
@@ -70,6 +76,7 @@ let deployment =
       ~zone:gcloud_zone
       ~java:`Oracle_7
       ~machine_type:(`Google_cloud `Highmem_8)
+      ~additional_packages
   in
   Deployment.make (name "one")
     ~configuration
