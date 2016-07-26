@@ -16,7 +16,21 @@ let name s = sprintf "%s-%s" prefix s
 let user = name "user"
 let host = name "pbs-server"
 
-let work_dir = env_exn "BIOKEPI_WORK_DIR"
+let work_dir =
+  env_exn "BIOKEPI_WORK_DIR"
+
+let install_tools_path =
+  try env_exn "INSTALL_TOOLS_PATH"
+  with _ -> work_dir // "toolkit"
+
+let pyensembl_cache_dir =
+  try env_exn "PYENSEMBLE_CACHE_DIR"
+  with _ -> work_dir // "pyensembl-cache"
+
+let reference_genomes_path =
+  try env_exn "REFERENCE_GENOME_PATH"
+  with _ -> work_dir // "reference-genome"
+
 
 let ketrew_host =
   ksprintf Ketrew.EDSL.Host.parse
@@ -58,17 +72,19 @@ let biokepi_machine =
   let open Biokepi.Setup.Download_reference_genomes in
   let toolkit =
     Biokepi.Setup.Tool_providers.default_toolkit ()
-      ~host ~install_tools_path:(work_dir // "toolkit")
+      ~host
+      ~install_tools_path
       ~run_program
       ~gatk_jar_location:(fun () -> gatk_jar_location)
       ~mutect_jar_location:(fun () -> mutect_jar_location) in
   Biokepi.Machine.create (name "cluster")
+    ~pyensembl_cache_dir
     ~max_processors
     ~get_reference_genome:(fun name ->
         Biokepi.Setup.Download_reference_genomes.get_reference_genome name
           ~toolkit
           ~host ~run_program
-          ~destination_path:(work_dir // "reference-genome"))
+          ~destination_path:reference_genomes_path)
     ~host
     ~toolkit
     ~run_program
