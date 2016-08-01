@@ -30,11 +30,18 @@ let name s = sprintf "%s-%s" prefix s
 
 let gcloud_zone = env_exn "GCLOUD_ZONE"
 
+let with_webserver =
+  try env_exn "WITH_WEBSERVER" = "true"
+  with _ -> false
+
 let additional_packages =
-  try
-    env_exn "ADDITIONAL_CLUSTER_PACKAGES"
-    |> String.split ~on:(`Character ',')
-  with _ -> []
+  (if with_webserver then [ "nginx" ] else [])
+  @ (
+    try
+      env_exn "ADDITIONAL_CLUSTER_PACKAGES"
+      |> String.split ~on:(`Character ',')
+    with _ -> []
+  )
 
 let authorize_keys =
   let i = open_in @@ env_exn "SSH_CONFIG_DIR" // "kserver.pub" in
@@ -63,14 +70,6 @@ let configuration =
   Configuration.make ~gcloud_host ()
 
 let deployment =
-  (* let one_nfs_mount =
-    let server = Node.make (name "nfs-nfsservervm") in
-    Nfs.Mount.make
-      ~server
-      ~remote_path:("/nfs-pool")
-      ~witness:"./.stratowitness"
-      ~mount_point:"/nfswork"
-  in *)
   let compute_node name =
     Node.make name
       ~zone:gcloud_zone
@@ -82,6 +81,9 @@ let deployment =
     ~configuration
     ~clusters:[
       Cluster.make (name "one-cluster")
+        ~open_ports:(if with_webserver
+                     then [ `Pbs_server, 80 ]
+                     else [])
         ~compute_nodes:(
           List.init nb_of_nodes (fun i ->
               compute_node (sprintf "%s-compute-%02d" prefix i)
