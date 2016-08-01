@@ -64,7 +64,13 @@ let biokepi_machine =
         Option.map name ~f:(fun n ->
             String.map n ~f:(function
               | 'A' .. 'Z' | 'a' .. 'z' | '0' .. '9' as c -> c
-              | other -> '_')) in
+              | other -> '_')
+            |> fun s ->
+            if String.length s > 60
+            then String.sub_exn s ~index:0 ~length:59
+            else s
+          )
+      in
       pbs ~host ?name ?processors p
     end
   in
