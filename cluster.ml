@@ -82,7 +82,7 @@ let deployment =
     ~clusters:[
       Cluster.make (name "one-cluster")
         ~open_ports:(if with_webserver
-                     then [ `Pbs_server, 80 ]
+                     then [ `Pbs_server, 80; `Pbs_server, 443 ]
                      else [])
         ~compute_nodes:(
           List.init nb_of_nodes (fun i ->
