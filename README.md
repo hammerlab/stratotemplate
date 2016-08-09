@@ -15,6 +15,7 @@ Configuration template for stratocumulus &amp; more
      access to all Cloud APIs."
 * Add your SSH key to the instance (under **Management, disk, networking,
   SSH keys > SSH Keys** at the bottom).
+ * The [`gcloud`](https://cloud.google.com/sdk/gcloud/reference/compute/ssh) command-line tool will generate and use SSH keys for you
 
 And click to let the magic happen.
 
